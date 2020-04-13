@@ -29,9 +29,11 @@ app.set("views", "./views");
 app.set("view engine", "html");
 
 const indexRouter = require("./routes/index");
+const surveysRouter = require("./routes/surveys");
 const usersRouter = require("./routes/users");
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/api/survey", surveysRouter);
+app.use("/api/user", usersRouter);
 
 module.exports = app;
