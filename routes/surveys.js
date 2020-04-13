@@ -32,7 +32,7 @@ router.post("/sendresponse", async (req, res) => {
 	const response = await SurveyModel.addSurveyResponse(survey_id);
 
 	if (response.command === "INSERT" && response.rowCount >= 1) {
-		res.sendStatus(200);
+		res.send({ survey_id: response }).status(200);
 	} else {
 		res.send("Could not add new blog post").status(409);
 	}
