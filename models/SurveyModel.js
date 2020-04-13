@@ -37,84 +37,53 @@ class SurveyModel {
 		}
 	}
 
-	// static async getAllPosts() {
-	// 	try {
-	// 		const allPosts = await db.any(`
-	// 			SELECT posts.id, posts.title, posts.post, authors.author FROM posts
-	// 			INNER JOIN authors
-	// 			ON posts.author_id = authors.id
-	// 			ORDER BY posts.id DESC;
-	// 		`);
-	// 		return allPosts;
-	// 	} catch (error) {
-	// 		console.error("ERROR", error);
-	// 		return error.message;
-	// 	}
-	// }
+	static async getSurveyResponses(id) {
+		try {
+			const surveyResponses = await db.any(`
+				SELECT * FROM responses
+				WHERE survey_id = ${id}
+			`);
+			return surveyResponses;
+		} catch (error) {
+			return error.message;
+		}
+	}
 
-	// static async getOnePost(id) {
-	// 	try {
-	// 		const onePost = await db.one(`
-	// 			SELECT * FROM posts
-	// 			INNER JOIN authors
-	// 			ON posts.author_id = authors.id
-	// 		  WHERE posts.id = ${id};
-	// 		`);
-	// 		return onePost;
-	// 	} catch (error) {
-	// 		console.error("ERROR", error);
-	// 		return error.message;
-	// 	}
-	// }
+	// ADDING TO DB
 
-	// // Comments //
+	static async addSurveyResponse(survey_id) {
+		try {
+			const addResponse = await db.result(`
+				INSERT INTO responses (survey_id)
+				VALUES (${survey_id})
+			`);
+			return addResponse;
+		} catch (error) {
+			return error.message;
+		}
+	}
 
-	// static async getAllComments(id) {
-	// 	try {
-	// 		const allComments = await db.any(`
-	// 			SELECT comments.comment, comments.post_id, comments.author_id, authors.author as comment_author, authors.email as comment_email FROM comments
-	// 			INNER JOIN authors
-	// 			ON comments.author_id = authors.id
-	// 			WHERE comments.post_id = ${id}
-	// 			ORDER BY comments.id DESC;
-	// 		`);
-	// 		return allComments;
-	// 	} catch (error) {
-	// 		console.error("ERROR", error);
-	// 		return error.message;
-	// 	}
-	// }
-
-	// // Authors //
-
-	// static async getAllAuthors() {
-	// 	try {
-	// 		const allAuthors = await db.any(`
-	// 			SELECT * FROM authors;
-	// 		`);
-	// 		return allAuthors;
-	// 	} catch (error) {
-	// 		console.error("ERROR", error);
-	// 		return error.message;
-	// 	}
-	// }
-
-	// static async getOneAuthor(id) {
-	// 	try {
-	// 		const oneAuthor = await db.one(`
-	// 			SELECT * FROM authors
-	// 			INNER JOIN posts
-	// 			ON authors.id = posts.author_id
-	// 		  WHERE authors.id = ${id};
-	// 		`);
-	// 		return oneAuthor;
-	// 	} catch (error) {
-	// 		console.error("ERROR", error);
-	// 		return error.message;
-	// 	}
-	// }
-
-	// // ADDING TO DB
+	static async addSurveyResponseQuestions(
+		response_id,
+		question_id,
+		option_1,
+		option_2,
+		option_3,
+		option_4,
+		option_5,
+		option_6,
+		other
+	) {
+		try {
+			const addResponseQuestions = await db.result(`
+				INSERT INTO response_questions (response_id, question_id, option_1, option_2,	option_3,	option_4,	option_5,	option_6,	other)
+				VALUES ('${response_id}', '${question_id}', '${option_1}', '${option_2}', '${option_3}', '${option_4}', '${option_5}', '${option_6}', '${other}')
+			`);
+			return addResponseQuestions;
+		} catch (error) {
+			return error.message;
+		}
+	}
 
 	// static async addPost(title, post, author_id) {
 	// 	try {
