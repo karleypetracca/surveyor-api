@@ -123,6 +123,6 @@ VALUES
   (492338);
 
 INSERT INTO response_questions
-  (response_id, question_id, option_1, option_2)
+  (response_id, question_id, option_1, option_2, option_3, option_4, option_5, option_6, other)
 VALUES
-  (661747, 380263, false, true);
+  (661747, 380263, false, true, false, false, false, false, "");

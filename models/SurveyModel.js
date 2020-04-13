@@ -56,6 +56,7 @@ class SurveyModel {
 			const addResponse = await db.result(`
 				INSERT INTO responses (survey_id)
 				VALUES (${survey_id})
+				RETURNING response_id;
 			`);
 			return addResponse;
 		} catch (error) {
