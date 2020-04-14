@@ -34,15 +34,15 @@ router.post("/addsurvey", async (req, res) => {
 	if (response.command === "INSERT" && response.rowCount >= 1) {
 		res.json({ survey_id: response.rows[0].survey_id }).status(200);
 	} else {
-		res.send("Could not add new blog post").status(409);
+		res.send("Could not log survey").status(409);
 	}
 });
 
 /* POST add survey questions */
 router.post("/addsurveyquestions", async (req, res) => {
 	const {
-		text,
 		survey_id,
+		text,
 		question_type_id,
 		question_order,
 		option_1,
@@ -55,8 +55,8 @@ router.post("/addsurveyquestions", async (req, res) => {
 		img_url,
 	} = req.body;
 	const response = await SurveyModel.addSurveyQuestions(
-		text,
 		survey_id,
+		text,
 		question_type_id,
 		question_order,
 		option_1,
@@ -72,7 +72,7 @@ router.post("/addsurveyquestions", async (req, res) => {
 	if (response.command === "INSERT" && response.rowCount >= 1) {
 		res.sendStatus(200);
 	} else {
-		res.send("Could not add new blog post").status(409);
+		res.send("Could not log survey questions").status(409);
 	}
 });
 
@@ -84,7 +84,7 @@ router.post("/sendresponse", async (req, res) => {
 	if (response.command === "INSERT" && response.rowCount >= 1) {
 		res.json({ response_id: response.rows[0].response_id }).status(200);
 	} else {
-		res.send("Could not add new blog post").status(409);
+		res.send("Could not log response").status(409);
 	}
 });
 
@@ -116,7 +116,7 @@ router.post("/sendresponsequestions", async (req, res) => {
 	if (response.command === "INSERT" && response.rowCount >= 1) {
 		res.sendStatus(200);
 	} else {
-		res.send("Could not add new blog post").status(409);
+		res.send("Could not log response").status(409);
 	}
 });
 

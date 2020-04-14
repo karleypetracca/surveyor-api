@@ -77,8 +77,8 @@ class SurveyModel {
 	static async addSurvey(name, survey_type_id, user_id) {
 		try {
 			const addSurvey = await db.result(`
-				INSERT INTO responses (name, survey_type_id, user_id)
-				VALUES (${name}, ${survey_type_id}, ${user_id})
+				INSERT INTO surveys (name, survey_type_id, user_id)
+				VALUES ('${name}', '${survey_type_id}', '${user_id}')
 				RETURNING survey_id;
 			`);
 			return addSurvey;
@@ -88,8 +88,8 @@ class SurveyModel {
 	}
 
 	static async addSurveyQuestions(
-		text,
 		survey_id,
+		text,
 		question_type_id,
 		question_order,
 		option_1,
@@ -103,8 +103,8 @@ class SurveyModel {
 	) {
 		try {
 			const addSurveyQuestions = await db.result(`
-				INSERT INTO response_questions (text, survey_id, question_type_id, question_order, option_1, option_2,	option_3,	option_4,	option_5,	option_6,	other, img_url)
-				VALUES ('${text}', '${survey_id}', '${question_type_id}', '${question_order}', '${option_1}', '${option_2}', '${option_3}', '${option_4}', '${option_5}', '${option_6}', '${other}', '${img_url}')
+				INSERT INTO questions (survey_id, text, question_type_id, question_order, option_1, option_2,	option_3,	option_4,	option_5,	option_6,	other, img_url)
+				VALUES ('${survey_id}', '${text}', '${question_type_id}', '${question_order}', '${option_1}', '${option_2}', '${option_3}', '${option_4}', '${option_5}', '${option_6}', '${other}', '${img_url}')
 			`);
 			return addSurveyQuestions;
 		} catch (error) {
