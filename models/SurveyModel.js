@@ -37,11 +37,34 @@ class SurveyModel {
 		}
 	}
 
-	static async getSurveyResponses(id) {
+	// 	SELECT DISTINCT responses.response_id, responses.survey_id, responses.submitted_timestamp,
+	// 	response_questions.question_id, response_questions.response_question_id,
+	// 	questions.option_1, response_questions.option_1 as response_option_1,
+	// 		questions.option_2, response_questions.option_2 as response_option_2,
+	// 		questions.option_3, response_questions.option_3 as response_option_3,
+	// 		questions.option_4, response_questions.option_4 as response_option_4,
+	// 		questions.option_5, response_questions.option_5 as response_option_5,
+	// 		questions.option_6, response_questions.option_6 as response_option_6,
+	// 		questions.other, response_questions.other as response_other
+	// FROM response_questions
+	// INNER JOIN responses
+	// ON response_questions.response_id = responses.response_id
+	// INNER JOIN questions
+	// ON responses.survey_id = questions.survey_id
+	// WHERE response_questions.question_id = ${ question_id }
+	// AND responses.survey_id = ${ survey_id }
+	// ORDER BY responses.submitted_timestamp ASC
+
+	static async getSurveyResponses(question_id) {
 		try {
 			const surveyResponses = await db.any(`
-				SELECT * FROM responses
-				WHERE survey_id = ${id}
+				SELECT *
+				FROM response_questions
+				INNER JOIN responses
+				ON response_questions.response_id = responses.response_id
+				INNER JOIN questions
+				ON responses.survey_id = questions.survey_id
+				WHERE response_questions.question_id = ${question_id}
 			`);
 			return surveyResponses;
 		} catch (error) {
@@ -50,6 +73,44 @@ class SurveyModel {
 	}
 
 	// ADDING TO DB
+
+	static async addSurvey(name, survey_type_id, user_id) {
+		try {
+			const addSurvey = await db.result(`
+				INSERT INTO responses (name, survey_type_id, user_id)
+				VALUES (${name}, ${survey_type_id}, ${user_id})
+				RETURNING survey_id;
+			`);
+			return addSurvey;
+		} catch (error) {
+			return error.message;
+		}
+	}
+
+	static async addSurveyQuestions(
+		text,
+		survey_id,
+		question_type_id,
+		question_order,
+		option_1,
+		option_2,
+		option_3,
+		option_4,
+		option_5,
+		option_6,
+		other,
+		img_url
+	) {
+		try {
+			const addSurveyQuestions = await db.result(`
+				INSERT INTO response_questions (text, survey_id, question_type_id, question_order, option_1, option_2,	option_3,	option_4,	option_5,	option_6,	other, img_url)
+				VALUES ('${text}', '${survey_id}', '${question_type_id}', '${question_order}', '${option_1}', '${option_2}', '${option_3}', '${option_4}', '${option_5}', '${option_6}', '${other}', '${img_url}')
+			`);
+			return addSurveyQuestions;
+		} catch (error) {
+			return error.message;
+		}
+	}
 
 	static async addSurveyResponse(survey_id) {
 		try {
@@ -85,32 +146,6 @@ class SurveyModel {
 			return error.message;
 		}
 	}
-
-	// static async addPost(title, post, author_id) {
-	// 	try {
-	// 		const postPost = await db.result(`
-	// 			INSERT INTO posts (title, post, author_id)
-	// 			VALUES ('${title}', '${post}', ${author_id})
-	// 		`);
-	// 		return postPost;
-	// 	} catch (error) {
-	// 		console.error("ERROR", error);
-	// 		return error.message;
-	// 	}
-	// }
-
-	// static async addComment(comment, author_id, post_id) {
-	// 	try {
-	// 		const postComment = await db.result(`
-	// 			INSERT INTO comments (comment, author_id, post_id)
-	// 			VALUES ('${comment}', ${author_id}, '${post_id}')
-	// 		`);
-	// 		return postComment;
-	// 	} catch (error) {
-	// 		console.error("ERROR", error);
-	// 		return error.message;
-	// 	}
-	// }
 }
 
 module.exports = SurveyModel;
