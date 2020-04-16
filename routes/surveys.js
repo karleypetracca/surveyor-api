@@ -3,25 +3,49 @@ const express = require("express"),
 	SurveyModel = require("../models/SurveyModel");
 
 /* GET survey */
-router.get("/summary/:id?", async function (req, res) {
-	const { id } = req.params;
-	const data = await SurveyModel.getSurveySummary(id);
+router.get("/summary/:survey_id?", async function (req, res) {
+	const { survey_id } = req.params;
+	const data = await SurveyModel.getSurveySummary(survey_id);
 
 	res.json(data).status(200);
 });
 
 /* GET survey questions */
-router.get("/detail/:id?", async function (req, res) {
-	const { id } = req.params;
-	const data = await SurveyModel.getSurveyQuestions(id);
+router.get("/detail/:survey_id?", async function (req, res) {
+	const { survey_id } = req.params;
+	const data = await SurveyModel.getSurveyQuestions(survey_id);
 
 	res.json(data).status(200);
 });
 
-/* GET survey responses */
-router.get("/responses/:survey_id?/:question_id?", async function (req, res) {
-	const { survey_id, question_id } = req.params;
-	const data = await SurveyModel.getSurveyResponses(question_id);
+/* GET survey responses - count all */
+router.get("/responses/count/:survey_id?", async function (req, res) {
+	const { survey_id } = req.params;
+	const data = await SurveyModel.getSurveyResponsesCount(survey_id);
+
+	res.json(data).status(200);
+});
+
+/* GET survey responses - all questions */
+router.get("/responses/all/:survey_id?", async function (req, res) {
+	const { survey_id } = req.params;
+	const data = await SurveyModel.getSurveyResponsesAll(survey_id);
+
+	res.json(data).status(200);
+});
+
+/* GET survey responses - specific question */
+router.get("/responses/question/:question_id?", async function (req, res) {
+	const { question_id } = req.params;
+	const data = await SurveyModel.getSurveyResponsesQuestion(question_id);
+
+	res.json(data).status(200);
+});
+
+/* GET survey responses - specific question */
+router.get("/responses/other/:survey_id?", async function (req, res) {
+	const { survey_id } = req.params;
+	const data = await SurveyModel.getSurveyResponsesOther(survey_id);
 
 	res.json(data).status(200);
 });

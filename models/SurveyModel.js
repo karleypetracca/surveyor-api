@@ -7,13 +7,13 @@ class SurveyModel {
 
 	// Posts //
 
-	static async getSurveySummary(id) {
+	static async getSurveySummary(survey_id) {
 		try {
 			const survey = await db.one(`
 				SELECT surveys.survey_id, surveys.name, surveys.survey_type_id, surveys.user_id, surveys.created_timestamp, users.username
 				FROM surveys
 				INNER JOIN users ON surveys.user_id = users.user_id
-				WHERE surveys.survey_id = ${id};
+				WHERE surveys.survey_id = ${survey_id};
 			`);
 			return survey;
 		} catch (error) {
@@ -21,14 +21,14 @@ class SurveyModel {
 		}
 	}
 
-	static async getSurveyQuestions(id) {
+	static async getSurveyQuestions(survey_id) {
 		try {
 			const surveyQuestions = await db.any(`
 				SELECT questions.question_id, questions.text, surveys.survey_id, surveys.name, surveys.survey_type_id, surveys.user_id, surveys.created_timestamp, questions.question_type_id, questions.question_order, questions.option_1, questions.option_2, questions.option_3, questions.option_4, questions.option_5, questions.option_6, questions.other, questions.img_url 
 				FROM questions
 				INNER JOIN surveys
 				ON questions.survey_id = surveys.survey_id
-				WHERE questions.survey_id = ${id}
+				WHERE questions.survey_id = ${survey_id}
 				ORDER BY question_order ASC;
 			`);
 			return surveyQuestions;
@@ -37,34 +37,62 @@ class SurveyModel {
 		}
 	}
 
-	// 	SELECT DISTINCT responses.response_id, responses.survey_id, responses.submitted_timestamp,
-	// 	response_questions.question_id, response_questions.response_question_id,
-	// 	questions.option_1, response_questions.option_1 as response_option_1,
-	// 		questions.option_2, response_questions.option_2 as response_option_2,
-	// 		questions.option_3, response_questions.option_3 as response_option_3,
-	// 		questions.option_4, response_questions.option_4 as response_option_4,
-	// 		questions.option_5, response_questions.option_5 as response_option_5,
-	// 		questions.option_6, response_questions.option_6 as response_option_6,
-	// 		questions.other, response_questions.other as response_other
-	// FROM response_questions
-	// INNER JOIN responses
-	// ON response_questions.response_id = responses.response_id
-	// INNER JOIN questions
-	// ON responses.survey_id = questions.survey_id
-	// WHERE response_questions.question_id = ${ question_id }
-	// AND responses.survey_id = ${ survey_id }
-	// ORDER BY responses.submitted_timestamp ASC
+	static async getSurveyResponsesCount(survey_id) {
+		try {
+			const surveyResponses = await db.one(`
+				SELECT COUNT(*)
+				FROM responses
+				INNER JOIN surveys
+				ON responses.survey_id = surveys.survey_id
+				WHERE responses.survey_id = ${survey_id};
+			`);
+			return surveyResponses;
+		} catch (error) {
+			return error.message;
+		}
+	}
 
-	static async getSurveyResponses(question_id) {
+	static async getSurveyResponsesAll(survey_id) {
+		try {
+			const surveyResponses = await db.any(`
+				SELECT *
+				FROM responses
+				INNER JOIN response_questions
+				ON responses.response_id = response_questions.response_id
+				WHERE responses.survey_id = ${survey_id}
+			`);
+			return surveyResponses;
+		} catch (error) {
+			return error.message;
+		}
+	}
+
+	static async getSurveyResponsesQuestion(question_id) {
 		try {
 			const surveyResponses = await db.any(`
 				SELECT *
 				FROM response_questions
 				INNER JOIN responses
 				ON response_questions.response_id = responses.response_id
-				INNER JOIN questions
-				ON responses.survey_id = questions.survey_id
 				WHERE response_questions.question_id = ${question_id}
+				ORDER BY responses.submitted_timestamp ASC;
+			`);
+			return surveyResponses;
+		} catch (error) {
+			return error.message;
+		}
+	}
+
+	static async getSurveyResponsesOther(survey_id) {
+		try {
+			const surveyResponses = await db.any(`
+				SELECT *
+				FROM response_questions
+				INNER JOIN responses
+				ON response_questions.response_id = responses.response_id
+				WHERE responses.survey_id = ${survey_id}
+				AND response_questions.other <> ''
+				ORDER BY responses.submitted_timestamp ASC;
 			`);
 			return surveyResponses;
 		} catch (error) {

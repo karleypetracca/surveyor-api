@@ -3,7 +3,7 @@
 ## Summary
 
 This API supports the Surveyor client app as the back end. Client
-repo can be on [GitHub](http://www.github.com/karleypetracca/surveyor-client),
+repo can be on [GitHub](https://github.com/karleypetracca/surveyor-client),
 or seen as a demo site at
 [surveyor.karleypetracca.com](http://surveyor.karleypetracca.com)
 
